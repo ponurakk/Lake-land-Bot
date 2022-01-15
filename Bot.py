@@ -1,3 +1,6 @@
+from dis import dis, disco
+from email import message
+from pydoc import cli
 from time import time
 from turtle import color, title
 import discord
@@ -33,16 +36,16 @@ class Bcolors:
 @client.event
 async def on_ready():
     
-    change_status.start()
+    # change_status.start()
     print('{0.user} is ready'.format(client))
 
-    server = MinecraftServer('lake-land.pl')
-    status = server.status()
-    latency = server.ping()
-    print(f"The server replied in {latency} ms")
-    query = server.query()
-    print(f"The server has the following players online: {', '.join(query.players.names)}")
-    await client.change_presence(status=discord.Status.online, activity=discord.Game(f"{status.players.online}/{status.players.max} Wbijaj na serwer!"))
+    # server = MinecraftServer('lake-land.pl')
+    # status = server.status()
+    # latency = server.ping()
+    # print(f"The server replied in {latency} ms")
+    # query = server.query()
+    # print(f"The server has the following players online: {', '.join(query.players.names)}")
+    # await client.change_presence(status=discord.Status.online, activity=discord.Game(f"{status.players.online}/{status.players.max} Wbijaj na serwer!"))
     # Na razie jest tak potem może zmienie jak będzie działać
 
 
@@ -61,28 +64,114 @@ async def on_message(message):
 
     await client.process_commands(message)
 
+
+page1 = discord.Embed(title="Pomoc LakeLand.pl", description=f" \
+                        **`?ip`** - Ip serwera\n\
+                        **`?strona`** - Link do naszej strony\n\
+                        **`?sklep`** - Link do naszego sklepu\n\
+                        **`?fb`** - Link do naszego facebooka\n\
+                        **`?dc`** - Link do naszego discorda" ,
+        colour=discord.Colour.from_rgb(135, 255, 16),
+        timestamp=datetime.datetime.utcnow())
+page1.set_thumbnail(url='https://lake-land.pl/unknown-removebg-preview.png')
+page1.set_footer(text='Strona 1/2')
+page2 = discord.Embed(title="Komendy LakeLand.pl".format(client), description=f" \
+                        **`/register <hasło> <hasło>`** - Rejstracja\n\
+                        **`/l <hasło> | /login <hasło>`** - Logowanie\n\
+                        **`/changepassword <stare Hasło> <nowe Hasło>`** - Zmień hasło\n\
+                        **`/msg <gracz> | /wiadomosc <gracz>`** - Prywatna wiadomość\n\
+                        **`/r <message> | /reply`** - Odpowiedź na ostatnią wiadomość prywatną\n\
+                        **`/workbench`** - Crafting (Wyłącznie dla **Vip+**)\n\
+                        **`/warp`** - Teleport do warpów\n\
+                        **`/kosz`** - Poprostu kosz\n\
+                        **`/trade <gracz>`** - Rozpoczęcie wymiany z innym graczem\n\
+                        **`/trade accept/deny`** - Akceptacja lub odrzucanie wymiany\n\
+                        **`/tpa <gracz>`** - Teleportacja do gracza\n\
+                        **`/tpaaccept`** - Akceptacja teleportacji\n\
+                        **`/tpadeny`** - Odrzucanie teleportacji\n\
+                        **`/spawn`** - Teleportacja na spawn\n\
+                        **`/sethome | /ustawdom`** - Ustaw dom\n\
+                        **`/delhome <nazwa>`** - Usuń dom\n\
+                        **`/home | /dom`** - Twoje dostępne domy\n\
+                        **`/delhome <nazwa>`** - Usuń dom\n\
+                        **`/kasa | /konto`** - Ilość twoich pieniadzy.\n\
+                        **`/przelew <nazwa> | /przelej <nazwa>`** - Przelej pieniądze do gracza.\n\
+                        **`/backpack`** - Plecak.\n\
+                        **`/sklep | /discord | /strona`** - Link do social mediów.\n\
+                        **`/rynek`** - Rynek\n\
+                        **`/aukcje`** - Aukcje\n\
+                        **`/ah`** - Sklep/Rynek graczy\n\
+                        **`/domaukcyjny`** - Dom aukcyjny\n\
+                        **`/dzialka`** - lista komend dzialki\n\
+                        **`/skup | /market`** - Skup serwerowy\n\
+                        **`/sprzedajwszytsko lub /sprzedajgui`** - Sprzedaj wszystkie przedmioty\n",
+        colour=discord.Colour.from_rgb(135, 255, 16),
+        timestamp=datetime.datetime.utcnow())
+page2.set_thumbnail(url='https://lake-land.pl/unknown-removebg-preview.png')
+page2.set_footer(text='Strona 2/2')
+
+client.help_pages = [page1, page2]
+
 @client.command()
 async def pomoc(ctx, *, command=None):
     if command == None:
-        e = discord.Embed(title="Pomoc {0.user}".format(client), description=f" \
-                                **`?ip`**\n Ip naszego serwera minecraft\n\n\
-                                **`?strona`**\n Link do naszej strony\n\n\
-                                **`?sklep`**\n Link do naszego sklepu\n\n\
-                                **`?fb`**\n Link do naszego facebooka\n\n\
-                                **`?dc`**\n Link do naszego discorda" ,
-            colour=discord.Colour.blurple(), timestamp=datetime.datetime.utcnow())
-    elif command == "ip":
-        e = discord.Embed(title="Pomoc {0.user}".format(client), description="Ip naszego serwera minecraft", colour=discord.Colour.blurple(), timestamp=datetime.datetime.utcnow())
-    elif command == "strona":
-        e = discord.Embed(title="Pomoc {0.user}".format(client), description="Link do naszej strony", colour=discord.Colour.blurple(), timestamp=datetime.datetime.utcnow())
-    elif command == "sklep":
-        e = discord.Embed(title="Pomoc {0.user}".format(client), description="Link do naszego sklepu", colour=discord.Colour.blurple(), timestamp=datetime.datetime.utcnow())
-    elif command == "fb":
-        e = discord.Embed(title="Pomoc {0.user}".format(client), description="Link do naszego facebooka", colour=discord.Colour.blurple(), timestamp=datetime.datetime.utcnow())
-    elif command == "dc":
-        e = discord.Embed(title="Pomoc {0.user}".format(client), description="Link do naszego discorda", colour=discord.Colour.blurple(), timestamp=datetime.datetime.utcnow())
+        buttons = [u"\u23EA", u"\u2B05", u"\u27A1", u"\u23E9"] # skip to start, left, right, skip to end
+        current = 0
 
-    await ctx.send(embed=e)
+        msg = await ctx.send(embed=client.help_pages[current])
+        
+        for button in buttons:
+            await msg.add_reaction(button)
+            
+        while True:
+            try:
+                reaction, user = await client.wait_for("reaction_add", check=lambda reaction, user: user == ctx.author and reaction.emoji in buttons, timeout=10.0)
+
+            except asyncio.TimeoutError:
+                await msg.clear_reactions()
+                break
+
+            else:
+                previous_page = current
+                if reaction.emoji == u"\u23EA":
+                    current = 0
+                    
+                elif reaction.emoji == u"\u2B05":
+                    if current > 0:
+                        current -= 1
+                        
+                elif reaction.emoji == u"\u27A1":
+                    if current < len(client.help_pages)-1:
+                        current += 1
+
+                elif reaction.emoji == u"\u23E9":
+                    current = len(client.help_pages)-1
+
+                for button in buttons:
+                    await msg.remove_reaction(button, ctx.author)
+
+                if current != previous_page:
+                    await msg.edit(embed=client.help_pages[current])
+    elif command == "ip":
+        e = discord.Embed(title="Pomoc {0.user}".format(client), description="Ip naszego serwera minecraft\n`lake-land.pl`", colour=discord.Colour.from_rgb(135, 255, 16), timestamp=datetime.datetime.utcnow())
+        e.set_thumbnail(url='https://lake-land.pl/unknown-removebg-preview.png')
+        await ctx.send(embed=e)
+    elif command == "strona":
+        e = discord.Embed(title="Pomoc {0.user}".format(client), description="Link do naszej strony\nhttps://lake-land.pl", colour=discord.Colour.from_rgb(135, 255, 16), timestamp=datetime.datetime.utcnow())
+        e.set_thumbnail(url='https://lake-land.pl/unknown-removebg-preview.png')
+        await ctx.send(embed=e)
+    elif command == "sklep":
+        e = discord.Embed(title="Pomoc {0.user}".format(client), description="Link do naszego sklepu\nhttps://lake-land.pl/shop/Survival", colour=discord.Colour.from_rgb(135, 255, 16), timestamp=datetime.datetime.utcnow())
+        e.set_thumbnail(url='https://lake-land.pl/unknown-removebg-preview.png')
+        await ctx.send(embed=e)
+    elif command == "fb":
+        e = discord.Embed(title="Pomoc {0.user}".format(client), description="Link do naszego facebooka\nhttps://fb.lake-land.pl", colour=discord.Colour.from_rgb(135, 255, 16), timestamp=datetime.datetime.utcnow())
+        e.set_thumbnail(url='https://lake-land.pl/unknown-removebg-preview.png')
+        await ctx.send(embed=e)
+    elif command == "dc":
+        e = discord.Embed(title="Pomoc {0.user}".format(client), description="Link do naszego discorda\nhttps://dc.lake-land.pl", colour=discord.Colour.from_rgb(135, 255, 16), timestamp=datetime.datetime.utcnow())
+        e.set_thumbnail(url='https://lake-land.pl/unknown-removebg-preview.png')
+        await ctx.send(embed=e)
 
 
 @client.command()
@@ -158,7 +247,7 @@ async def giveaway(ctx, duration: int, time_type: str, *, prize: str):
         e.description = f"Hostowany przez: {ctx.author.mention}"
         e.timestamp = datetime.datetime.utcnow()
         await ctx.send(f"Giveaway się zakończył! :tada:", embed=e)
-        await ctx.send(f"Stwórz ticket na #「📩」ticket ")
+        await ctx.send(f"Stwórz ticket na {client.get_channel}#「📩」ticket ")
 
 
 @client.command()
