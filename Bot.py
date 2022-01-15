@@ -144,4 +144,4 @@ async def on_command_error(ctx, error):
         msg = 'Aby wykonać tą komendę ponownie poczekaj **{:.2f}**'.format(error.retry_after)
         await ctx.send(msg, delete_after=error.retry_after)
 
-client.run(token)# test
+client.run(token)
