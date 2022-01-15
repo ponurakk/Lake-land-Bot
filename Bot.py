@@ -1,7 +1,9 @@
-from pydoc import cli
+from time import time
+from turtle import color, title
 import discord
 import random
-import json
+import asyncio
+import datetime
 from discord.ext import tasks
 from discord.ext import commands
 from mcstatus import MinecraftServer
@@ -91,15 +93,48 @@ async def change_status():
 
 @client.command()
 @commands.has_permissions(administrator=True)
-async def giveaway(ctx, *, topic, ):
-    await ctx.send(':4698peperespected: GIVEAWAY :4698peperespected:')
-    embed = discord.Embed(title=topic)
-    embed.add_field(name=topic, value='', inline=False)
-    embed.footer(name='a', value='')
-    guild = ctx.guild
-    random.random = guild.users
+async def giveaway(ctx, duration: int, time_type: str, *, prize: str):
+    ldigit = duration%10
+    print(ldigit)
+    if time_type == 's':
+        time_name = 'sekuny'
+    elif time_type == 'm':
+        time_name = 'minuty'
+    elif time_type == 'g':
+        time_name = 'godziny'
+    elif time_type == 'd':
+        time_name = 'dni'
+    
+    embed = discord.Embed(title=prize,
+                        description=f"Hostowany przez: {ctx.author.mention}\nZareaguj :tada: by dołączyć!\nPozostały czas: **{duration}** {time_name}",
+                        color=ctx.guild.me.top_role.color, )
 
-    await ctx.send(embed=embed)
+    msg = await ctx.channel.send(content=":tada: **GIVEAWAY** :tada:", embed=embed)
+    await msg.add_reaction("🎉")
+    if time_type == 's':
+        duration = duration
+    elif time_type == 'm':
+        duration = duration*60
+    elif time_type == 'g':
+        duration = duration*3600
+    elif time_type == 'd':
+        duration = duration*86400
+    await asyncio.sleep(duration)
+    new_msg = await ctx.channel.fetch_message(msg.id)
+
+    user_list = [u for u in await new_msg.reactions[0].users().flatten() if u != client.user] # Check the reactions/don't count the bot reaction
+
+    if len(user_list) == 0:
+        await ctx.send("Nikt nie zareagował. :7000squidpepe:") 
+    else:
+        winner = random.choice(user_list)
+        e = discord.Embed()
+        e.title = winner.mention
+        e.description = f"Wygrałeś: **{prize}**!"
+        e.description = f"Hostowany przez: {ctx.author.mention}"
+        e.timestamp = datetime.datetime.utcnow()
+        await ctx.send(f"Giveaway się zakończył! :tada:", embed=e)
+        await ctx.send(f"Stwórz ticket na #「📩」ticket ")
 
 
 @client.command()
@@ -108,20 +143,20 @@ async def ck(ctx):
     await ctx.message.delete()
     await ctx.author.send('Online')
 
-@client.command(aliases=['offlinemode', 'offmode'])
-@commands.has_permissions(administrator=True)
-async def _offlinemode(ctx):
-    await ctx.message.delete()
-    await client.change_presence(status=discord.Status.invisible, activity=discord.Game("U don't even see me"))
-    await ctx.author.send("Jestem Teraz Offline.")
+# @client.command(aliases=['offlinemode', 'offmode'])
+# @commands.has_permissions(administrator=True)
+# async def _offlinemode(ctx):
+#     await ctx.message.delete()
+#     await client.change_presence(status=discord.Status.invisible, activity=discord.Game("U don't even see me"))
+#     await ctx.author.send("Jestem Teraz Offline.")
 
 
-@client.command(aliases=['onlinemode', 'onmode'])
-@commands.has_permissions(administrator=True)
-async def _onlinemode(ctx):
-    await ctx.message.delete()
-    await client.change_presence(status=discord.Status.online, activity=discord.Game('122 032 119 032 065'))
-    await ctx.author.send("Jestem Teraz Online.")
+# @client.command(aliases=['onlinemode', 'onmode'])
+# @commands.has_permissions(administrator=True)
+# async def _onlinemode(ctx):
+#     await ctx.message.delete()
+#     await client.change_presence(status=discord.Status.online, activity=discord.Game('122 032 119 032 065'))
+#     await ctx.author.send("Jestem Teraz Online.")
 
 # Error handlers
 
