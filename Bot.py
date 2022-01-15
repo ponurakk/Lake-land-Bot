@@ -9,7 +9,7 @@ from discord.ext import commands
 from mcstatus import MinecraftServer
 
 
-client = commands.Bot(command_prefix="?")
+client = commands.Bot(command_prefix="?", help_command=None)
 token = open("token", "r").read() # token to nazwa pliku z tokenem XD
 
 class Bcolors:
@@ -50,15 +50,40 @@ async def on_ready():
 @client.event
 async def on_message(message):
     if client.user.mentioned_in(message):
-        await message.channel.send('Hej. Mój prefix to `;`')
+        await message.channel.send(f'Hej. Mój prefix to `{client.command_prefix}`')
     if message.content == "ping":
         await message.channel.send('**Pong**')
         ping_ = client.latency
         ping = round(ping_ * 1000)
         print(f'Ping: {Bcolors.Green}{ping}{Bcolors.ENDC}')
+        e = discord.Embed(client)
         await message.channel.send(f"My ping is {ping}ms")
 
     await client.process_commands(message)
+
+@client.command()
+async def pomoc(ctx, *, command=None):
+    if command == None:
+        e = discord.Embed(title="Pomoc {0.user}".format(client), description=f" \
+                                **`?ip`**\n Ip naszego serwera minecraft\n\n\
+                                **`?strona`**\n Link do naszej strony\n\n\
+                                **`?sklep`**\n Link do naszego sklepu\n\n\
+                                **`?fb`**\n Link do naszego facebooka\n\n\
+                                **`?dc`**\n Link do naszego discorda" ,
+            colour=discord.Colour.blurple(), timestamp=datetime.datetime.utcnow())
+    elif command == "ip":
+        e = discord.Embed(title="Pomoc {0.user}".format(client), description="Ip naszego serwera minecraft", colour=discord.Colour.blurple(), timestamp=datetime.datetime.utcnow())
+    elif command == "strona":
+        e = discord.Embed(title="Pomoc {0.user}".format(client), description="Link do naszej strony", colour=discord.Colour.blurple(), timestamp=datetime.datetime.utcnow())
+    elif command == "sklep":
+        e = discord.Embed(title="Pomoc {0.user}".format(client), description="Link do naszego sklepu", colour=discord.Colour.blurple(), timestamp=datetime.datetime.utcnow())
+    elif command == "fb":
+        e = discord.Embed(title="Pomoc {0.user}".format(client), description="Link do naszego facebooka", colour=discord.Colour.blurple(), timestamp=datetime.datetime.utcnow())
+    elif command == "dc":
+        e = discord.Embed(title="Pomoc {0.user}".format(client), description="Link do naszego discorda", colour=discord.Colour.blurple(), timestamp=datetime.datetime.utcnow())
+
+    await ctx.send(embed=e)
+
 
 @client.command()
 async def ip(ctx):
@@ -95,7 +120,6 @@ async def change_status():
 @commands.has_permissions(administrator=True)
 async def giveaway(ctx, duration: int, time_type: str, *, prize: str):
     ldigit = duration%10
-    print(ldigit)
     if time_type == 's':
         time_name = 'sekuny'
     elif time_type == 'm':
