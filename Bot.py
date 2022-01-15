@@ -36,16 +36,16 @@ class Bcolors:
 @client.event
 async def on_ready():
     
-    # change_status.start()
+    change_status.start()
     print('{0.user} is ready'.format(client))
 
-    # server = MinecraftServer('lake-land.pl')
-    # status = server.status()
-    # latency = server.ping()
-    # print(f"The server replied in {latency} ms")
-    # query = server.query()
-    # print(f"The server has the following players online: {', '.join(query.players.names)}")
-    # await client.change_presence(status=discord.Status.online, activity=discord.Game(f"{status.players.online}/{status.players.max} Wbijaj na serwer!"))
+    server = MinecraftServer('lake-land.pl')
+    status = server.status()
+    latency = server.ping()
+    print(f"The server replied in {latency} ms")
+    query = server.query()
+    print(f"The server has the following players online: {', '.join(query.players.names)}")
+    await client.change_presence(status=discord.Status.online, activity=discord.Game(f"{status.players.online}/{status.players.max} Wbijaj na serwer!"))
     # Na razie jest tak potem może zmienie jak będzie działać
 
 
