@@ -1,13 +1,11 @@
-from dis import dis, disco
-from email import message
-from pydoc import cli
-from sqlite3 import Timestamp
-from time import time, timezone
-from turtle import color, title
+from genericpath import exists
 import discord
 import random
 import asyncio
 import datetime
+import minestat
+import prawcore
+from prawcore import NotFound
 from discord.ext import tasks
 from discord.ext import commands
 from mcstatus import MinecraftServer
@@ -36,17 +34,18 @@ class Bcolors:
 
 @client.event
 async def on_ready():
-    
-    # change_status.start()
     print('{0.user} is ready'.format(client))
 
-    # server = MinecraftServer('lake-land.pl')
-    # status = server.status()
-    # latency = server.ping()
-    # print(f"The server replied in {latency} ms")
-    # query = server.query()
-    # print(f"The server has the following players online: {', '.join(query.players.names)}")
-    # await client.change_presence(status=discord.Status.online, activity=discord.Game(f"{status.players.online}/{status.players.max} Wbijaj na serwer!"))
+    # ms = minestat.MineStat('lake-land.pl', 25565)
+    # print('Minecraft server status of %s on port %d:' % (ms.address, ms.port))
+    # if ms.online:
+    #     print('Server is online running version %s with %s out of %s players.' % (ms.version, ms.current_players, ms.max_players))
+    #     print('Message of the day: %s' % ms.motd)
+    #     print('Message of the day without formatting: %s' % ms.stripped_motd)
+    #     print('Latency: %sms' % ms.latency)
+    #     print('Connected using protocol: %s' % ms.slp_protocol)
+    # else:
+    #     print('Server is offline!')
     # Na razie jest tak potem może zmienie jak będzie działać
 
 
@@ -65,8 +64,36 @@ async def on_message(message):
 
     await client.process_commands(message)
 
+reddit = prawcore.Reddit(client_id='Qbi7Dac-PWQ2oD_X7uPxcQ',
+                     client_secret='gmyMK1H9lawI861uML00AWOa0Omoyw',
+                     user_agent='Meme finder', 
+                     check_for_async=False)
 
-page1 = discord.Embed(title="Pomoc LakeLand.pl", description=f" \
+
+@client.command()
+async def meme(ctx, *, subreddit="memes"):
+
+    exists = True
+    try:
+        reddit.subreddits.search_by_name(subreddit, exact=True)
+    except NotFound:
+        exists = False
+    else:
+        memes_submissions = reddit.subreddit(subreddit).hot()
+        post_to_pick = random.randint(1, 100)
+        for i in range(0, post_to_pick):
+            submission = next(x for x in memes_submissions if not x.stickied)
+
+        e = discord.Embed(title=f"{submission.title}l".format(client))
+        e.set_image(url=submission.url)
+        await ctx.message.delete()
+        await ctx.send(embed=e)
+
+
+
+# Help command
+
+hPage1 = discord.Embed(title="Pomoc LakeLand.pl", description=f" \
                         **`?ip`** - Ip serwera\n\
                         **`?strona`** - Link do naszej strony\n\
                         **`?sklep`** - Link do naszego sklepu\n\
@@ -74,9 +101,9 @@ page1 = discord.Embed(title="Pomoc LakeLand.pl", description=f" \
                         **`?dc`** - Link do naszego discorda" ,
         colour=discord.Colour.from_rgb(135, 255, 16),
         timestamp=datetime.datetime.utcnow())
-page1.set_thumbnail(url='https://lake-land.pl/unknown-removebg-preview.png')
-page1.set_footer(text='Strona 1/3')
-page2 = discord.Embed(title="Komendy LakeLand.pl".format(client), description=f" \
+hPage1.set_thumbnail(url='https://lake-land.pl/unknown-removebg-preview.png')
+hPage1.set_footer(text='Strona 1/3')
+hPage2 = discord.Embed(title="Komendy LakeLand.pl".format(client), description=f" \
                         **`/register <hasło> <hasło>`** - Rejstracja\n\
                         **`/l <hasło> | /login <hasło>`** - Logowanie\n\
                         **`/changepassword <stare Hasło> <nowe Hasło>`** - Zmień hasło\n\
@@ -108,9 +135,9 @@ page2 = discord.Embed(title="Komendy LakeLand.pl".format(client), description=f"
                         **`/sprzedajwszytsko lub /sprzedajgui`** - Sprzedaj wszystkie przedmioty\n",
         colour=discord.Colour.from_rgb(135, 255, 16),
         timestamp=datetime.datetime.utcnow())
-page2.set_thumbnail(url='https://lake-land.pl/unknown-removebg-preview.png')
-page2.set_footer(text='Strona 2/3')
-page3 = discord.Embed(title="Komendy LakeLand.pl".format(client), description=f" \
+hPage2.set_thumbnail(url='https://lake-land.pl/unknown-removebg-preview.png')
+hPage2.set_footer(text='Strona 2/3')
+hPage3 = discord.Embed(title="Komendy LakeLand.pl".format(client), description=f" \
                         **`/dzialka info | /dinfo`** - Informacje na teamt działki\n\
                         **`/dzialka add <nick>`** - Dodawanie do działki\n\
                         **`/dzialka remove <nick>`** - Usuwanie z działki\n\
@@ -126,10 +153,10 @@ page3 = discord.Embed(title="Komendy LakeLand.pl".format(client), description=f"
                         **`/dzialka toggle`** - Blokada działki",
         colour=discord.Colour.from_rgb(135, 255, 16),
         timestamp=datetime.datetime.utcnow())
-page3.set_thumbnail(url='https://lake-land.pl/unknown-removebg-preview.png')
-page3.set_footer(text='Strona 3/3')
+hPage3.set_thumbnail(url='https://lake-land.pl/unknown-removebg-preview.png')
+hPage3.set_footer(text='Strona 3/3')
 
-client.help_pages = [page1, page2, page3]
+client.help_pages = [hPage1, hPage2, hPage3]
 
 @client.command()
 async def pomoc(ctx, *, command=None):
@@ -192,6 +219,89 @@ async def pomoc(ctx, *, command=None):
         e.set_thumbnail(url='https://lake-land.pl/unknown-removebg-preview.png')
         await ctx.send(embed=e)
 
+sPage1 = discord.Embed(title="Pomoc LakeLand.pl", description=f" \
+                        **`?ip`** - Ip serwera\n\
+                        **`?strona`** - Link do naszej strony\n\
+                        **`?sklep`** - Link do naszego sklepu\n\
+                        **`?fb`** - Link do naszego facebooka\n\
+                        **`?dc`** - Link do naszego discorda" ,
+        colour=discord.Colour.from_rgb(135, 255, 16),
+        timestamp=datetime.datetime.utcnow())
+sPage1.set_thumbnail(url='https://lake-land.pl/unknown-removebg-preview.png')
+sPage1.set_footer(text='Strona 1/3')
+sPage2 = discord.Embed(title="Pomoc LakeLand.pl", description=f" \
+                        **`?ip`** - Ip serwera\n\
+                        **`?strona`** - Link do naszej strony\n\
+                        **`?sklep`** - Link do naszego sklepu\n\
+                        **`?fb`** - Link do naszego facebooka\n\
+                        **`?dc`** - Link do naszego discorda" ,
+        colour=discord.Colour.from_rgb(135, 255, 16),
+        timestamp=datetime.datetime.utcnow())
+sPage2.set_thumbnail(url='https://lake-land.pl/unknown-removebg-preview.png')
+sPage2.set_footer(text='Strona 1/3')
+sPage3 = discord.Embed(title="Pomoc LakeLand.pl", description=f" \
+                        **`?ip`** - Ip serwera\n\
+                        **`?strona`** - Link do naszej strony\n\
+                        **`?sklep`** - Link do naszego sklepu\n\
+                        **`?fb`** - Link do naszego facebooka\n\
+                        **`?dc`** - Link do naszego discorda" ,
+        colour=discord.Colour.from_rgb(135, 255, 16),
+        timestamp=datetime.datetime.utcnow())
+sPage3.set_thumbnail(url='https://lake-land.pl/unknown-removebg-preview.png')
+sPage3.set_footer(text='Strona 1/3')
+sPage4 = discord.Embed(title="Pomoc LakeLand.pl", description=f" \
+                        **`?ip`** - Ip serwera\n\
+                        **`?strona`** - Link do naszej strony\n\
+                        **`?sklep`** - Link do naszego sklepu\n\
+                        **`?fb`** - Link do naszego facebooka\n\
+                        **`?dc`** - Link do naszego discorda" ,
+        colour=discord.Colour.from_rgb(135, 255, 16),
+        timestamp=datetime.datetime.utcnow())
+sPage4.set_thumbnail(url='https://lake-land.pl/unknown-removebg-preview.png')
+sPage4.set_footer(text='Strona 1/3')
+
+client.statute = [sPage1, sPage2, sPage3, sPage4]
+
+@client.command()
+async def regulamin(ctx):
+    buttons = [u"\u23EA", u"\u2B05", u"\u27A1", u"\u23E9"] # skip to start, left, right, skip to end
+    current = 0
+
+    msg = await ctx.send(embed=client.help_pages[current])
+    
+    for button in buttons:
+        await msg.add_reaction(button)
+        
+    while True:
+        try:
+            reaction, user = await client.wait_for("reaction_add", check=lambda reaction, user: user == ctx.author and reaction.emoji in buttons, timeout=10.0)
+
+        except asyncio.TimeoutError:
+            await msg.clear_reactions()
+            break
+
+        else:
+            previous_page = current
+            if reaction.emoji == u"\u23EA":
+                current = 0
+                
+            elif reaction.emoji == u"\u2B05":
+                if current > 0:
+                    current -= 1
+                    
+            elif reaction.emoji == u"\u27A1":
+                if current < len(client.help_pages)-1:
+                    current += 1
+
+            elif reaction.emoji == u"\u23E9":
+                current = len(client.help_pages)-1
+
+            for button in buttons:
+                await msg.remove_reaction(button, ctx.author)
+
+            if current != previous_page:
+                await msg.edit(embed=client.help_pages[current])
+
 
 @client.command()
 async def ip(ctx):
@@ -216,9 +326,8 @@ async def dc(ctx):
 
 @tasks.loop(seconds=5)
 async def change_status():
-    server = MinecraftServer('lake-land.pl')
-    status = server.status()
-    await client.change_presence(status=discord.Status.online, activity=discord.Game(f"{status.players.online}/{status.players.max} Wbijaj na serwer!"))
+    server = minestat.MineStat('feerko.pl', 25565)
+    await client.change_presence(status=discord.Status.online, activity=discord.Game(f"{server.current_players}/{server.max_players} Wbijaj na serwer!"))
     # Na razie jest tak potem może zmienie jak będzie działać
 
 
@@ -269,7 +378,7 @@ async def giveaway(ctx, duration: int, time_type: str, *, prize: str):
         e.set_footer(text=f'Start: {time_start}')
         # e.set_thumbnail(url='https://lake-land.pl/unknown-removebg-preview.png') Można wstawić tort(?) czy coś w tym stylu
         await ctx.send(f"Giveaway się zakończył! :tada:", embed=e)
-        await ctx.send(f"Stwórz ticket na <#838400969515597855>")
+        await ctx.send(f"Stwórz ticket na kanale <#838400969515597855>")
 
 
 @client.command()
