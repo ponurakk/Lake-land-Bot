@@ -1,7 +1,8 @@
 from dis import dis, disco
 from email import message
 from pydoc import cli
-from time import time
+from sqlite3 import Timestamp
+from time import time, timezone
 from turtle import color, title
 import discord
 import random
@@ -36,16 +37,16 @@ class Bcolors:
 @client.event
 async def on_ready():
     
-    change_status.start()
+    # change_status.start()
     print('{0.user} is ready'.format(client))
 
-    server = MinecraftServer('lake-land.pl')
-    status = server.status()
-    latency = server.ping()
-    print(f"The server replied in {latency} ms")
-    query = server.query()
-    print(f"The server has the following players online: {', '.join(query.players.names)}")
-    await client.change_presence(status=discord.Status.online, activity=discord.Game(f"{status.players.online}/{status.players.max} Wbijaj na serwer!"))
+    # server = MinecraftServer('lake-land.pl')
+    # status = server.status()
+    # latency = server.ping()
+    # print(f"The server replied in {latency} ms")
+    # query = server.query()
+    # print(f"The server has the following players online: {', '.join(query.players.names)}")
+    # await client.change_presence(status=discord.Status.online, activity=discord.Game(f"{status.players.online}/{status.players.max} Wbijaj na serwer!"))
     # Na razie jest tak potem może zmienie jak będzie działać
 
 
@@ -74,7 +75,7 @@ page1 = discord.Embed(title="Pomoc LakeLand.pl", description=f" \
         colour=discord.Colour.from_rgb(135, 255, 16),
         timestamp=datetime.datetime.utcnow())
 page1.set_thumbnail(url='https://lake-land.pl/unknown-removebg-preview.png')
-page1.set_footer(text='Strona 1/2')
+page1.set_footer(text='Strona 1/3')
 page2 = discord.Embed(title="Komendy LakeLand.pl".format(client), description=f" \
                         **`/register <hasło> <hasło>`** - Rejstracja\n\
                         **`/l <hasło> | /login <hasło>`** - Logowanie\n\
@@ -108,9 +109,27 @@ page2 = discord.Embed(title="Komendy LakeLand.pl".format(client), description=f"
         colour=discord.Colour.from_rgb(135, 255, 16),
         timestamp=datetime.datetime.utcnow())
 page2.set_thumbnail(url='https://lake-land.pl/unknown-removebg-preview.png')
-page2.set_footer(text='Strona 2/2')
+page2.set_footer(text='Strona 2/3')
+page3 = discord.Embed(title="Komendy LakeLand.pl".format(client), description=f" \
+                        **`/dzialka info | /dinfo`** - Informacje na teamt działki\n\
+                        **`/dzialka add <nick>`** - Dodawanie do działki\n\
+                        **`/dzialka remove <nick>`** - Usuwanie z działki\n\
+                        **`/dzialka name`** - Ustawianie nazwy działki\n\
+                        **`/dzialka polacz`** - łączenie działek\n\
+                        **`/dzialka flag`** - flagi działek\n\
+                        **`/dzialka get`** - Odebranie działki (200$)\n\
+                        **`/dzialka home`** - Teleport do działki\n\
+                        **`/dzialka sethome`** - Ustawienie home działki\n\
+                        **`/dzialka granica`** - Granica działki\n\
+                        **`/dzialka view`** - Granice działki\n\
+                        **`/dzialka unclaim`** - Usuwanie działki\n\
+                        **`/dzialka toggle`** - Blokada działki",
+        colour=discord.Colour.from_rgb(135, 255, 16),
+        timestamp=datetime.datetime.utcnow())
+page3.set_thumbnail(url='https://lake-land.pl/unknown-removebg-preview.png')
+page3.set_footer(text='Strona 3/3')
 
-client.help_pages = [page1, page2]
+client.help_pages = [page1, page2, page3]
 
 @client.command()
 async def pomoc(ctx, *, command=None):
@@ -210,7 +229,7 @@ async def change_status():
 async def giveaway(ctx, duration: int, time_type: str, *, prize: str):
     ldigit = duration%10
     if time_type == 's':
-        time_name = 'sekuny'
+        time_name = 'sekundy'
     elif time_type == 'm':
         time_name = 'minuty'
     elif time_type == 'g':
@@ -220,7 +239,9 @@ async def giveaway(ctx, duration: int, time_type: str, *, prize: str):
     
     embed = discord.Embed(title=prize,
                         description=f"Hostowany przez: {ctx.author.mention}\nZareaguj :tada: by dołączyć!\nPozostały czas: **{duration}** {time_name}",
-                        color=ctx.guild.me.top_role.color, )
+                        colour=discord.Colour.from_rgb(135, 255, 16),
+                        timestamp=datetime.datetime.utcnow())
+    time_start = datetime.datetime.utcnow()
 
     msg = await ctx.channel.send(content=":tada: **GIVEAWAY** :tada:", embed=embed)
     await msg.add_reaction("🎉")
@@ -241,13 +262,14 @@ async def giveaway(ctx, duration: int, time_type: str, *, prize: str):
         await ctx.send("Nikt nie zareagował. :7000squidpepe:") 
     else:
         winner = random.choice(user_list)
-        e = discord.Embed()
-        e.title = winner.mention
-        e.description = f"Wygrałeś: **{prize}**!"
-        e.description = f"Hostowany przez: {ctx.author.mention}"
-        e.timestamp = datetime.datetime.utcnow()
+        e = discord.Embed(title=f"{prize}", description=f" \
+                        Wygrał: **{winner.mention}**!\n\
+                        Hostowany przez: {ctx.author.mention}",
+            colour=discord.Colour.from_rgb(135, 255, 16))
+        e.set_footer(text=f'Start: {time_start}')
+        # e.set_thumbnail(url='https://lake-land.pl/unknown-removebg-preview.png') Można wstawić tort(?) czy coś w tym stylu
         await ctx.send(f"Giveaway się zakończył! :tada:", embed=e)
-        await ctx.send(f"Stwórz ticket na {client.get_channel}#「📩」ticket ")
+        await ctx.send(f"Stwórz ticket na <#838400969515597855>")
 
 
 @client.command()
@@ -279,7 +301,7 @@ async def on_command_error(ctx, error):
         await ctx.send('Najpierw spełnij wszystkie wymagania.')
     if isinstance(error, commands.MissingPermissions):
         await ctx.message.delete()
-        await ctx.send(f'Niestety ale nie jesteś Administratorem. **{ctx.author.name}**')
+        await ctx.send(f'Niestety **{ctx.author.name}** ale nie jesteś Administratorem.')
     if isinstance(error, commands.TooManyArguments):
         await ctx.send('Wpisałeś zbyt dużo argumentów.')
     if isinstance(error, commands.ChannelNotFound):
