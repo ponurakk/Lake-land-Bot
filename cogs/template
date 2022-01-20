@@ -1,0 +1,34 @@
+import discord
+from discord.ext import commands
+
+class Bcolors:
+    Red = '\033[91m'
+    Green = '\033[92m'
+    Blue = '\033[94m'
+    Cyan = '\033[96m'
+    White = '\033[97m'
+    Yellow = '\033[93m'
+    Magenta = '\033[95m'
+    Grey = '\033[90m'
+    Black = '\033[90m'
+    Default = '\033[99m'
+    Bold = '\033[1m'
+    Italic = '\033[3m'
+    Underline = '\033[4m'
+    ENDC = '\033[0m'
+
+class Example(commands.Cog):
+
+    def __init__(self, client):
+        self.client = client
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        print(f'{Bcolors.Green}Example{Bcolors.ENDC} loaded')
+    
+    @commands.command()
+    async def ping(self, ctx):
+        await ctx.send('Pong!')
+
+def setup(client):
+    client.add_cog(Example(client))
