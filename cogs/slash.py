@@ -1,3 +1,4 @@
+import time
 from turtle import title
 import discord
 import datetime
@@ -63,30 +64,30 @@ class Slash(commands.Cog):
                             value="TikTok"
                         )
                     ]
-               ),
-               create_option(
-                 name="liczba",
-                 description="Subskrypcji/Obserwacji.",
-                 option_type=4,
-                 required=True
-               ),
-               create_option(
-                 name="link",
-                 description="do kanału na Tiktok/YouTube/Twitch.",
-                 option_type=3,
-                 required=True
-               ),
-               create_option(
-                 name="srednia",
-                 description="Średnia liczba wyświetleń filmów.",
-                 option_type=4,
-                 required=True
-               )
-             ]
-    )
+                ),
+                create_option(
+                    name="liczba",
+                    description="Subskrypcji/Obserwacji.",
+                    option_type=4,
+                    required=True
+                ),
+                create_option(
+                    name="link",
+                    description="do kanału na Tiktok/YouTube/Twitch.",
+                    option_type=3,
+                    required=True
+                ),
+                create_option(
+                    name="srednia",
+                    description="Średnia liczba wyświetleń filmów.",
+                    option_type=4,
+                    required=True
+                )
+            ]
+        )
     async def _media(self, ctx, nick: str, rodzaj: str, liczba: int, link: str, srednia: int):
-        links = ['https://www.youtube.com/', 'https://vm.tiktok.com/', 'https://www.tiktok.com/',
-                 'https://www.twitch.tv/']
+        links = ['<https://www.youtube.com/>', '<https://vm.tiktok.com/>', '<https://www.tiktok.com/>',
+                 '<https://www.twitch.tv/>']
         if any(word in link for word in links):
             e = discord.Embed(title=f"Informacje użytkownika {ctx.author.name}.", description=f" \
                             Nick w Minecraft: **{nick}**\n\
@@ -98,7 +99,9 @@ class Slash(commands.Cog):
             timestamp=datetime.datetime.utcnow())
             await ctx.send(embed=e)
         else:
-            await ctx.send('Podałeś zły link.')
+            await ctx.send(f'Podałeś zły link. Spróbuj wykorzystać jeden z podanych:\n' + '\n'.join(links))
+            time.sleep(10)
+            await ctx.message.delete()
 
 def setup(client):
     client.add_cog(Slash(client))
