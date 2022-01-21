@@ -29,41 +29,43 @@ class Events(commands.Cog):
     
     @commands.Cog.listener()
     async def on_message_delete(self, message):
-        e = discord.Embed(
-            title="",
-            description=f"**Wiadomość wysłana przez {message.author.mention} usunięta w {message.channel.mention}.**\n\
-                `{message.content}`",
-            colour=discord.Colour.from_rgb(135, 255, 16),
-            timestamp=datetime.datetime.utcnow())
+        if not message.author.bot:
+            e = discord.Embed(
+                title="",
+                description=f"**Wiadomość wysłana przez {message.author.mention} usunięta w {message.channel.mention}.**\n\
+                    `{message.content}`",
+                colour=discord.Colour.from_rgb(135, 255, 16),
+                timestamp=datetime.datetime.utcnow())
 
-        e.set_author(name=message.author,
-            icon_url=message.author.avatar_url)
+            e.set_author(name=message.author,
+                icon_url=message.author.avatar_url)
 
-        e.set_footer(text=f'{message.guild.name}')
+            e.set_footer(text=f'{message.guild.name}')
 
 
-        channel = self.client.get_channel(804447582167629824) # 804447582167629824 836494084104781847
-        await channel.send(embed=e)
+            channel = self.client.get_channel(804447582167629824) # 804447582167629824 836494084104781847
+            await channel.send(embed=e)
 
     @commands.Cog.listener()
     async def on_message_edit(self, message_before, message_after):
-        e = discord.Embed(
-            title="",
-            description=f"**Wiadomość wysłana przez {message_before.author.mention} edytowana w {message_before.channel.mention}.** [Skocz do wiadomości.]({message_before.jump_url})\n\
-                **Przed:**\n\
-                `{message_before.content}`\n\
-                **Po:**\n\
-                `{message_after.content}`",
-            colour=discord.Colour.from_rgb(135, 255, 16),
-            timestamp=datetime.datetime.utcnow())
-        e.set_author(name=message_before.author,
-            icon_url=message_before.author.avatar_url)
+        if not message_before.author.bot:
+            e = discord.Embed(
+                title="",
+                description=f"**Wiadomość wysłana przez {message_before.author.mention} edytowana w {message_before.channel.mention}.** [Skocz do wiadomości.]({message_before.jump_url})\n\
+                    **Przed:**\n\
+                    `{message_before.content}`\n\
+                    **Po:**\n\
+                    `{message_after.content}`",
+                colour=discord.Colour.from_rgb(135, 255, 16),
+                timestamp=datetime.datetime.utcnow())
+            e.set_author(name=message_before.author,
+                icon_url=message_before.author.avatar_url)
 
-        e.set_footer(text=f'{message_before.guild.name}')
+            e.set_footer(text=f'{message_before.guild.name}')
 
 
-        channel = self.client.get_channel(804447582167629824) # 804447582167629824 836494084104781847
-        await channel.send(embed=e)
+            channel = self.client.get_channel(804447582167629824) # 804447582167629824 836494084104781847
+            await channel.send(embed=e)
 
     @commands.Cog.listener()
     async def on_message(self, message):
