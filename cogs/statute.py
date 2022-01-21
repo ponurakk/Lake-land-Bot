@@ -40,38 +40,38 @@ class Help(commands.Cog):
         sPage1.set_thumbnail(url='https://lake-land.pl/unknown-removebg-preview.png')
         sPage1.set_footer(text='Strona 1/4')
         sPage2 = discord.Embed(title="2. Rozgrywka na serwerze", description=f" \
-                                    2.1 Zakaz posiadania wulgarnego, obraźliwego nicku\n\
-                                    2.2 Zakaz budowania budowli: obraźliwych, wulgarnych lub niezgodnych z powszechnie wyznawaną etyką.\n\
-                                    2.3 Działanie na szkodę serwera będzie karane.\n\
-                                    2.4 Zakaz jakiegokolwiek proszenia o rangi.\n\
-                                    2.5 Zakaz używania cheatów ani innych wspomagaczy (np. przezroczyste tekstury).\n\
-                                    2.6 Zakaz bugowania serwera, wykorzystywania błędów.\n\
-                                    2.7 Zakaz kopiowania itemów." ,
+                                    `2.1` *Zakaz posiadania wulgarnego, obraźliwego nicku*\n\
+                                    `2.2` *Zakaz budowania budowli: obraźliwych, wulgarnych lub niezgodnych z powszechnie wyznawaną etyką.*\n\
+                                    `2.3` *Działanie na szkodę serwera będzie karane.*\n\
+                                    `2.4` *Zakaz jakiegokolwiek proszenia o rangi.*\n\
+                                    `2.5` *Zakaz używania cheatów ani innych wspomagaczy (np. przezroczyste tekstury).*\n\
+                                    `2.6` *Zakaz bugowania serwera, wykorzystywania błędów.*\n\
+                                    `2.7` *Zakaz kopiowania itemów.*" ,
                 colour=discord.Colour.from_rgb(135, 255, 16),
                 timestamp=datetime.datetime.utcnow())
         sPage2.set_thumbnail(url='https://lake-land.pl/unknown-removebg-preview.png')
         sPage2.set_footer(text='Strona 2/4')
         sPage3 = discord.Embed(title="3. Chat", description=f" \
-                                    3.1 Zakaz nadużywania wulgaryzmów. Tyczy się to również wiadomości prywatnej.\n\
-                                    3.2 Zakaz obrażania graczy. Tyczy się to również wiadomości prywatnej.\n\
-                                    3.3 Zakaz floodowania. Flood jest to więcej niż 4 takie same znaki następujące po sobie.\n\
-                                    3.4 Zakaz pisania CAPSLOCKIEM.\n\
-                                    3.5 Zakaz spamowania.\n\
-                                    3.6 Zakaz zaśmiecania chatu.\n\
-                                    3.7 Zakaz pisania tekstów o treściach pornograficznych, nazistowskich, rasistowskich oraz innych tekstów/wyrazów/stwierdzeń niezgodnych z powszechnie wyznawaną etyką.\n\
-                                    3.8 Zakaz reklamowania innych serwerów (Strony WWW, Serwery MC, DC itp.)\n\
-                                    3.9 Zakaz używania znaków specjalnych w celu wyróżnienia swojej wiadomości.\n\
-                                    3.10 Zakaz umyślnego pisania niepoprawną polszczyzną.\n\
-                                    3.11 Zakaz obrażania serwera.\n\
-                                    3.12 Zakaz obrażania administracji serwera." ,
+                                    `3.1` *Zakaz nadużywania wulgaryzmów. Tyczy się to również wiadomości prywatnej.*\n\
+                                    `3.2` *Zakaz obrażania graczy. Tyczy się to również wiadomości prywatnej.*\n\
+                                    `3.3` *Zakaz floodowania. Flood jest to więcej niż 4 takie same znaki następujące po sobie.*\n\
+                                    `3.4` *Zakaz pisania CAPSLOCKIEM.*\n\
+                                    `3.5` *Zakaz spamowania.*\n\
+                                    `3.6` *Zakaz zaśmiecania chatu.*\n\
+                                    `3.7` *Zakaz pisania tekstów o treściach pornograficznych, nazistowskich, rasistowskich oraz innych tekstów/wyrazów/stwierdzeń niezgodnych z powszechnie wyznawaną etyką.*\n\
+                                    `3.8` *Zakaz reklamowania innych serwerów (Strony WWW, Serwery MC, DC itp.)*\n\
+                                    `3.9` *Zakaz używania znaków specjalnych w celu wyróżnienia swojej wiadomości.*\n\
+                                    `3.10` *Zakaz umyślnego pisania niepoprawną polszczyzną.*\n\
+                                    `3.11` *Zakaz obrażania serwera.*\n\
+                                    `3.12` *Zakaz obrażania administracji serwera." ,
                 colour=discord.Colour.from_rgb(135, 255, 16),
                 timestamp=datetime.datetime.utcnow())
         sPage3.set_thumbnail(url='https://lake-land.pl/unknown-removebg-preview.png')
         sPage3.set_footer(text='Strona 3/4')
         sPage4 = discord.Embed(title="4. Płatności", description=f" \
-                                    4.1 W przypatku nie opłacenia 100% kwoty wymaganej, dotacja jest traktowna jako dobrowolny donate\n\
-                                    4.2 Płatności są realizowane za pomoca serwisu Tipply.pl\n\
-                                    4.3 W przypadku nie podania pełnych danych gracza przy składaniu zamówienia, dotacja jest traktowna jako dobrowolny donate" ,
+                                    `4.1` *W przypatku nie opłacenia 100% kwoty wymaganej, dotacja jest traktowna jako dobrowolny donate*\n\
+                                    `4.2` *Płatności są realizowane za pomoca serwisu Tipply.pl*\n\
+                                    `4.3` *W przypadku nie podania pełnych danych gracza przy składaniu zamówienia, dotacja jest traktowna jako dobrowolny donate.*" ,
                 colour=discord.Colour.from_rgb(135, 255, 16),
                 timestamp=datetime.datetime.utcnow())
         sPage4.set_thumbnail(url='https://lake-land.pl/unknown-removebg-preview.png')
@@ -120,4 +120,3 @@ class Help(commands.Cog):
 
 def setup(client):
     client.add_cog(Help(client))
-
