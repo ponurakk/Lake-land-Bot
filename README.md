@@ -11,4 +11,4 @@ And our discord to see Bot in action - https://discord.gg/KQY4gy5JC8
 // Relase-candidate is the previous version of this Bot. It may contain some errors.
 
 // Stable-release is actual version that is probably running right now.
-test1
+test12
