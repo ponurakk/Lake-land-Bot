@@ -12,3 +12,4 @@ And our discord to see Bot in action - https://discord.gg/KQY4gy5JC8
 
 // Stable-release is actual version that is probably running right now.
 test
+test2
