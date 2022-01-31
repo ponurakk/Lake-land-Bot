@@ -69,7 +69,7 @@ async def on_command_error(ctx, error):
         await ctx.send('Najpierw spełnij wszystkie wymagania.')
     if isinstance(error, commands.MissingPermissions):
         await ctx.message.delete()
-        await ctx.send(f'Niestety **{ctx.author.name}** ale nie jesteś Administratorem.')
+        await ctx.send(f'Niestety **{ctx.author.name}** ale nie masz odpowiednich uprawnień.')
     if isinstance(error, commands.TooManyArguments):
         await ctx.send('Wpisałeś zbyt dużo argumentów.')
     if isinstance(error, commands.ChannelNotFound):
