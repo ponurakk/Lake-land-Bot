@@ -1,13 +1,12 @@
 import discord
 import os
-from discord.ext import commands
-from discord_slash import cog_ext
-from discord_slash import SlashCommand, SlashContext
+from discord.ext import commands, tasks
+import git
 
-client = commands.Bot(command_prefix="?")
+intents = discord.Intents.default().all()
+client = commands.Bot(command_prefix="?", intents=intents)
 token = open("token2", "r").read() # token to nazwa pliku z tokenem XD
-slash = SlashCommand(client, sync_commands=True)
-
+intents.members = True
 class Bcolors:
     Red = '\033[91m'
     Green = '\033[92m'
@@ -29,6 +28,16 @@ async def on_ready():
     print('{0.user} is ready'.format(client))
 
     await client.change_presence(status=discord.Status.online, activity=discord.Game(f"?pomoc"))
+    run.start()
+
+repo = git.Repo(".git")
+repo.remotes.origin.pull("Stable-release")
+@tasks.loop(seconds=5)
+async def run():
+    current = repo.head.commit
+    repo.remotes.origin.pull("Stable-release")
+    if current != repo.head.commit:
+        print("Updated to newest version.")
 
 @client.command()
 async def load(ctx, extension):
@@ -52,7 +61,6 @@ async def reload(ctx, extension):
 for filename in os.listdir('./cogs'):
     if filename.endswith('.py'):
         client.load_extension(f'cogs.{filename[:-3]}')
-
 # Error handlers
 
 @client.event
