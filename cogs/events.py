@@ -163,20 +163,67 @@ class Events(commands.Cog):
 
     # member
 
-    # @commands.Cog.listener()
-    # async def on_member_join(self, member):
-    #     e = discord.Embed(
-    #             title="",
-    #             description=f"**Do serwera dołączył {member.mention}.**\n\
-    #                 **Przed:**\n\
-    #                 `{member.created_at}`",
-    #             colour=discord.Colour.from_rgb(135, 255, 16),
-    #             timestamp=datetime.datetime.utcnow()
-    #     )
-    #     e.set_author(name=member.name,
-    #                 icon_url=member.avatar_url)
+    @commands.Cog.listener()
+    async def on_member_join(self, member):
+        e = discord.Embed(
+                title="",
+                description=f"**Do serwera dołączył {member.mention}.**",
+                colour=discord.Colour.from_rgb(135, 255, 16),
+                timestamp=datetime.datetime.utcnow()
+        )
+        e.add_field(name="ID:", value=member.id, inline=False)
+        e.add_field(name="Konto stworzone:", value=member.created_at, inline=False)
+        e.set_author(name=member.name,
+                    icon_url=member.avatar_url)
 
-    #     e.set_footer(text=f'{member.created_at}')
+        channel = self.client.get_channel(804447582167629824) # 804447582167629824 836494084104781847
+        await channel.send(embed=e)
+    
+    @commands.Cog.listener()
+    async def on_member_remove(self, member):
+        e = discord.Embed(
+                title="",
+                description=f"**Własnie wyszedł {member.mention}.**",
+                colour=0xff0000,
+                timestamp=datetime.datetime.utcnow()
+        )
+        e.add_field(name="ID:", value=member.id, inline=False)
+        e.add_field(name="Dołączył:", value=member.joined_at, inline=False)
+        e.set_author(name=member.name,
+                    icon_url=member.avatar_url)
+        
+        channel = self.client.get_channel(804447582167629824) # 804447582167629824 836494084104781847
+        await channel.send(embed=e)
+
+    @commands.Cog.listener()
+    async def on_member_ban(self, guild, user):
+        e = discord.Embed(
+                title="",
+                description=f"**Użytkownik {user.mention} został zbabnowany.**",
+                colour=0xff0000,
+                timestamp=datetime.datetime.utcnow()
+        )
+        e.add_field(name="ID:", value=user.id, inline=False)
+        e.set_author(name=user.name,
+                    icon_url=user.avatar_url)
+        
+        channel = self.client.get_channel(804447582167629824) # 804447582167629824 836494084104781847
+        await channel.send(embed=e)
+    
+    @commands.Cog.listener()
+    async def on_member_unban(self, guild, user):
+        e = discord.Embed(
+                title="",
+                description=f"**Użytkownik {user.mention} został odbanowany.**",
+                colour=0xff0000,
+                timestamp=datetime.datetime.utcnow()
+        )
+        e.add_field(name="ID:", value=user.id, inline=False)
+        e.set_author(name=user.name,
+                    icon_url=user.avatar_url)
+
+        channel = self.client.get_channel(804447582167629824) # 804447582167629824 836494084104781847
+        await channel.send(embed=e)
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -204,14 +251,14 @@ def setup(client):
 # discord.on_guild_channel_delete(channel) +
 # discord.on_guild_channel_create(channel) +
 # discord.on_guild_channel_update(before, after) +
-# discord.on_member_join(member) -
-# discord.on_member_remove(member) -
+# discord.on_member_join(member) +
+# discord.on_member_remove(member) +
 # discord.on_member_update(before, after) -
 # discord.on_guild_role_create(role) -
 # discord.on_guild_role_delete(role) -
 # discord.on_guild_role_update(before, after) -
-# discord.on_member_ban(guild, user) -
-# discord.on_member_unban(guild, user) -
+# discord.on_member_ban(guild, user) +
+# discord.on_member_unban(guild, user) +
 # discord.on_invite_create(invite) -
 # discord.on_invite_delete(invite) -
 # discord.on_group_join(channel, user) -
