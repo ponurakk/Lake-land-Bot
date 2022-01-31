@@ -65,11 +65,11 @@ class Commands(commands.Cog):
 
     @commands.command()
     async def strona(self, ctx):
-        await ctx.send('Strona internetowa: https://lake-land.pl')
+        await ctx.send('Strona internetowa: https://www.lake-land.pl')
 
     @commands.command()
     async def sklep(self, ctx):
-        await ctx.send('Sklep: https://lake-land.pl/shop/Survival')
+        await ctx.send('Sklep: https://www.lake-land.pl/shop/Survival')
 
     @commands.command()
     async def fb(self, ctx):
