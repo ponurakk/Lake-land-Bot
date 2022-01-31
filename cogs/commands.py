@@ -1,6 +1,10 @@
+from http import client
+from re import I
 import discord
 import praw
 import random
+import json
+import datetime
 from prawcore import NotFound
 from discord.ext import commands
 
@@ -27,7 +31,7 @@ class Commands(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print(f'{Bcolors.Green}Commands{Bcolors.ENDC} loaded')
+        print(f"{Bcolors.Green}{self.__class__.__name__}{Bcolors.ENDC} Cog has been loaded\n-----")
 
 
 
@@ -74,6 +78,69 @@ class Commands(commands.Cog):
     @commands.command()
     async def dc(self, ctx):
         await ctx.send('Discord: https://dc.lake-land.pl')
+
+    async def get_profile_data(self):
+        with open("cogs/json/invites.json", "r") as f:
+            users = json.load(f)
+        return users
+    
+    async def open_account(self, user):
+        with open("cogs/json/invites.json", "r") as f:
+            users = json.load(f)
+
+        if str(user.id) in users:
+            return False
+        else:
+            users[str(user.id)] = {}
+            users[str(user.id)]["Nick"] = user.name
+            users[str(user.id)]["Total"] = 0
+            users[str(user.id)]["Invites"] = 0
+            users[str(user.id)]["Leaves"] = 0
+            users[str(user.id)]["Invited_Players"] = []
+
+        with open("cogs/json/invites.json", "w") as f:
+            json.dump(users, f, indent=4)
+            # TODO: sort_keys=True / sortuje alfabetycznie(nie polecam) # nie sortuje nazwy użytkownika ale daje na koniec
+        return True
+
+    @commands.command()
+    async def invites(self, ctx):
+        await self.open_account(ctx.author)
+        user = ctx.author
+        users = await self.get_profile_data()
+
+        total = users[str(user.id)]["Total"]
+        invites = users[str(user.id)]["Invites"]
+        leaves = users[str(user.id)]["Leaves"]
+        e = discord.Embed(
+            title=f"Statystyki zaproszeń dla {ctx.author.name}",
+            description=f"{ctx.author.mention} ma **{total}** zaproszeń!\n\n\
+                ✅ {invites} normalnych\n\
+                🚫 {leaves} wyszło",
+            colour=discord.Colour.from_rgb(135, 255, 16),
+            timestamp=datetime.datetime.utcnow()
+            )
+        e.set_footer(text=f'{ctx.author.name}')
+        e.set_thumbnail(url=ctx.author.avatar_url)
+        e.set_footer(icon_url=self.client.user.avatar_url, text=ctx.author)
+        await ctx.send(embed=e)
+
+    @commands.command()
+    async def total(self, ctx):
+
+        guild = self.client.get_guild(779319110885965844)
+        await ctx.send(f"Liczba członków: {ctx.guild.member_count}")
+        for members in guild.members:
+
+            await self.open_account(members)
+            user = members
+            users = await self.get_profile_data()
+            
+            print(members.name)
+            users[str(user.id)]["Total"] = 0
+            users[str(user.id)]["Invites"] = 0
+            users[str(user.id)]["Leaves"] = 0
+            users[str(user.id)]["Invited_Players"] = []
 
 def setup(client):
     client.add_cog(Commands(client))
