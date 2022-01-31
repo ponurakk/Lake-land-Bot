@@ -1,5 +1,4 @@
 import time
-from turtle import title
 import discord
 import datetime
 from discord.ext import commands
@@ -32,7 +31,7 @@ class Slash(commands.Cog):
     
     @commands.Cog.listener()
     async def on_ready(self):
-        print(f'{Bcolors.Green}Slash{Bcolors.ENDC} loaded')
+        print(f"{Bcolors.Green}{self.__class__.__name__}{Bcolors.ENDC} Cog has been loaded\n-----")
     
     @cog_ext.cog_slash(
         name="media", 

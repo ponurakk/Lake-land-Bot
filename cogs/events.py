@@ -1,5 +1,6 @@
 import discord
 import datetime
+import DiscordUtils
 from discord.ext import commands
 
 class Bcolors:
@@ -25,8 +26,10 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print(f'{Bcolors.Green}Events{Bcolors.ENDC} loaded')
+        print(f"{Bcolors.Green}{self.__class__.__name__}{Bcolors.ENDC} Cog has been loaded\n-----")
     
+    # message
+
     @commands.Cog.listener()
     async def on_message_delete(self, message):
         if not message.author.bot:
@@ -35,7 +38,8 @@ class Events(commands.Cog):
                 description=f"**Wiadomość wysłana przez {message.author.mention} usunięta w {message.channel.mention}.**\n\
                     `{message.content}`",
                 colour=discord.Colour.from_rgb(135, 255, 16),
-                timestamp=datetime.datetime.utcnow())
+                timestamp=datetime.datetime.utcnow()
+            )
 
             e.set_author(name=message.author,
                 icon_url=message.author.avatar_url)
@@ -57,7 +61,8 @@ class Events(commands.Cog):
                     **Po:**\n\
                     `{message_after.content}`",
                 colour=discord.Colour.from_rgb(135, 255, 16),
-                timestamp=datetime.datetime.utcnow())
+                timestamp=datetime.datetime.utcnow()
+            )
             e.set_author(name=message_before.author,
                 icon_url=message_before.author.avatar_url)
 
@@ -66,9 +71,116 @@ class Events(commands.Cog):
 
             channel = self.client.get_channel(804447582167629824) # 804447582167629824 836494084104781847
             await channel.send(embed=e)
+    
+    # channel
+
+    @commands.Cog.listener()
+    async def on_guild_channel_delete(self, channel):
+        e = discord.Embed(
+                title="",
+                description=f"Usunięto kanał #{channel.name}",
+                colour=discord.Colour.from_rgb(135, 255, 16),
+                timestamp=datetime.datetime.utcnow()
+        )
+        e.set_author(name=channel.name)
+
+        e.set_footer(text=f'{channel.guild.name}')
+
+
+        channel = self.client.get_channel(804447582167629824) # 804447582167629824 836494084104781847
+        await channel.send(embed=e)
+
+    @commands.Cog.listener()
+    async def on_guild_channel_create(self, channel):
+        e = discord.Embed(
+                title="",
+                description=f"Stworzono kanał {channel.mention}",
+                colour=discord.Colour.from_rgb(135, 255, 16),
+                timestamp=datetime.datetime.utcnow()
+        )
+        e.set_author(name=channel.name)
+
+        e.set_footer(text=f'{channel.guild.name}')
+
+
+        channel = self.client.get_channel(804447582167629824) # 804447582167629824 836494084104781847
+        await channel.send(embed=e)
+    
+    @commands.Cog.listener()
+    async def on_guild_channel_update(self, channel_before, channel_after):
+        if channel_before.name != channel_after.name and channel_before.topic == channel_after.topic:
+            e = discord.Embed(
+                title="",
+                description=f"**Nazwa {channel_after.mention} została edytowana.**\n\
+                    **Z:**\n\
+                    `{channel_before.name}`\n\
+                    **Na:**\n\
+                    `{channel_after.name}`",
+                colour=discord.Colour.from_rgb(135, 255, 16),
+                timestamp=datetime.datetime.utcnow()
+            )
+            e.set_author(name=channel_before.guild.name,
+                        icon_url=channel_before.guild.icon_url)
+
+            e.set_footer(text=f'{channel_before.guild.name}') 
+        elif channel_before.topic != channel_after.topic and channel_before.name == channel_after.name:
+            e = discord.Embed(
+                title="",
+                description=f"**Temat kanału {channel_after.mention} został edytowany.**\n\
+                    **Przed:**\n\
+                    `{channel_before.topic}`\n\
+                    **Po:**\n\
+                    `{channel_after.topic}`",
+                colour=discord.Colour.from_rgb(135, 255, 16),
+                timestamp=datetime.datetime.utcnow()
+            )
+            e.set_author(name=channel_before.guild.name,
+                        icon_url=channel_before.guild.icon_url)
+
+            e.set_footer(text=f'{channel_before.guild.name}')
+        elif channel_before.topic != channel_after.topic and channel_before.name != channel_after.name:
+            e = discord.Embed(
+                title="",
+                description=f"**Nazwa i temat kanału {channel_after.mention} zostały edytowane.**\n\
+                    **Nazwa Przed:**\n\
+                    `{channel_before.name}`\n\
+                    **Nazwa Po:**\n\
+                    `{channel_after.name}`\n\
+                    **Temat Przed:**\n\
+                    `{channel_before.topic}`\n\
+                    **Temat Po:**\n\
+                    `{channel_after.topic}`",
+                colour=discord.Colour.from_rgb(135, 255, 16),
+                timestamp=datetime.datetime.utcnow()
+            )
+            e.set_author(name=channel_before.guild.name,
+                        icon_url=channel_before.guild.icon_url)
+
+            e.set_footer(text=f'{channel_before.guild.name}')
+
+        channel = self.client.get_channel(804447582167629824) # 804447582167629824 836494084104781847
+        await channel.send(embed=e)
+
+    # member
+
+    # @commands.Cog.listener()
+    # async def on_member_join(self, member):
+    #     e = discord.Embed(
+    #             title="",
+    #             description=f"**Do serwera dołączył {member.mention}.**\n\
+    #                 **Przed:**\n\
+    #                 `{member.created_at}`",
+    #             colour=discord.Colour.from_rgb(135, 255, 16),
+    #             timestamp=datetime.datetime.utcnow()
+    #     )
+    #     e.set_author(name=member.name,
+    #                 icon_url=member.avatar_url)
+
+    #     e.set_footer(text=f'{member.created_at}')
 
     @commands.Cog.listener()
     async def on_message(self, message):
+        hello = ["hello", "hi", "witam", "siema"]
         if self.client.user.mentioned_in(message):
             await message.channel.send(f'Hej. Mój prefix to `{self.client.command_prefix}`')
         if message.content == "ping":
@@ -77,26 +189,30 @@ class Events(commands.Cog):
             ping = round(ping_ * 1000)
             print(f'Ping: {Bcolors.Green}{ping}{Bcolors.ENDC}')
             await message.channel.send(f"My ping is {ping}ms")
+        if message.content in hello:
+            await message.channel.send(f"Witaj.")
+        if message.content == "huj":
+            await message.channel.send(f"*chuj")
 
 def setup(client):
     client.add_cog(Events(client))
 
         
-# discord.on_message_delete(message)
-# discord.on_message_edit(before, after)
-# discord.on_reaction_add(reaction, user)
-# discord.on_guild_channel_delete(channel)
-# discord.on_guild_channel_create(channel)
-# discord.on_guild_channel_update(before, after)
-# discord.on_member_join(member) # nie wiem czy trzeba ¯\_(ツ)_/¯
-# discord.on_member_remove(member) # nie wiem czy trzeba ¯\_(ツ)_/¯
-# discord.on_member_update(before, after)
-# discord.on_guild_role_create(role)
-# discord.on_guild_role_delete(role)
-# discord.on_guild_role_update(before, after)
-# discord.on_member_ban(guild, user)
-# discord.on_member_unban(guild, user)
-# discord.on_invite_create(invite)
-# discord.on_invite_delete(invite)
-# discord.on_group_join(channel, user)
-# discord.on_group_remove(channel, user)
+# discord.on_message_delete(message) +
+# discord.on_message_edit(before, after) +
+# discord.on_reaction_add(reaction, user) ¯\_(ツ)_/¯
+# discord.on_guild_channel_delete(channel) +
+# discord.on_guild_channel_create(channel) +
+# discord.on_guild_channel_update(before, after) +
+# discord.on_member_join(member) -
+# discord.on_member_remove(member) -
+# discord.on_member_update(before, after) -
+# discord.on_guild_role_create(role) -
+# discord.on_guild_role_delete(role) -
+# discord.on_guild_role_update(before, after) -
+# discord.on_member_ban(guild, user) -
+# discord.on_member_unban(guild, user) -
+# discord.on_invite_create(invite) -
+# discord.on_invite_delete(invite) -
+# discord.on_group_join(channel, user) -
+# discord.on_group_remove(channel, user) -

@@ -27,60 +27,83 @@ class Admin_Commands(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print(f'{Bcolors.Green}Admin_Commands{Bcolors.ENDC} loaded')
-    
-    @commands.command()
-    @commands.has_permissions(administrator=True)
-    async def giveaway(self, ctx, duration: int, time_type: str, *, prize: str):
-        ldigit = duration%10
-        if time_type == 's':
-            time_name = 'sekundy'
-        elif time_type == 'm':
-            time_name = 'minuty'
-        elif time_type == 'g':
-            time_name = 'godziny'
-        elif time_type == 'd':
-            time_name = 'dni'
-        
-        embed = discord.Embed(title=prize,
-                            description=f"Hostowany przez: {ctx.author.mention}\nZareaguj :tada: by dołączyć!\nPozostały czas: **{duration}** {time_name}",
-                            colour=discord.Colour.from_rgb(135, 255, 16),
-                            timestamp=datetime.datetime.utcnow())
-        time_start = datetime.datetime.utcnow()
-
-        msg = await ctx.channel.send(content=":tada: **GIVEAWAY** :tada:", embed=embed)
-        await msg.add_reaction("🎉")
-        if time_type == 's':
-            duration = duration
-        elif time_type == 'm':
-            duration = duration*60
-        elif time_type == 'g':
-            duration = duration*3600
-        elif time_type == 'd':
-            duration = duration*86400
-        await asyncio.sleep(duration)
-        new_msg = await ctx.channel.fetch_message(msg.id)
-
-        user_list = [u for u in await new_msg.reactions[0].users().flatten() if u != self.client.user] # Check the reactions/don't count the bot reaction
-
-        if len(user_list) == 0:
-            await ctx.send("Nikt nie zareagował. :7000squidpepe:") 
-        else:
-            winner = random.choice(user_list)
-            e = discord.Embed(title=f"{prize}", description=f" \
-                            Wygrał: **{winner.mention}**!\n\
-                            Hostowany przez: {ctx.author.mention}",
-                colour=discord.Colour.from_rgb(135, 255, 16))
-            e.set_footer(text=f'Start: {time_start}')
-            # e.set_thumbnail(url='https://lake-land.pl/unknown-removebg-preview.png') Można wstawić tort(?) czy coś w tym stylu
-            await ctx.send(f"Giveaway się zakończył! :tada:", embed=e)
-            await ctx.send(f"Stwórz ticket na kanale <#838400969515597855>")
-
+        print(f"{Bcolors.Green}{self.__class__.__name__}{Bcolors.ENDC} Cog has been loaded\n-----")
 
     @commands.command()
     async def ck(self, ctx):
         await ctx.message.delete()
         await ctx.author.send('Online')
+
+    @commands.command()
+    @commands.has_any_role('Właściciel', 'Technik', 'Moderator', 'Helper')
+    async def echo(self, ctx, msg):
+        await ctx.message.delete()
+        await ctx.send(msg)
+
+    @commands.command()
+    @commands.has_any_role('Właściciel', 'Technik', 'Moderator', 'Helper')
+    async def clear(self, ctx, amount=1):
+        if amount <= 1000:
+            await ctx.message.delete()
+            await ctx.channel.purge(limit=amount)
+        else:
+            await ctx.send("Przepraszam ale liczba jest zbyt duża limit to **1000**.")
+
+    @commands.command()
+    @commands.has_any_role('Właściciel', 'Technik', 'Moderator', 'Helper')
+    async def kick(self, ctx, member: discord.Member):
+        msg = await ctx.send(f"Potwierdź usunięcie {member.name} z serwera.")
+        await msg.add_reaction('✅')
+        await msg.add_reaction('❌')
+
+        try:
+            reaction, user = await self.client.wait_for("reaction_add", check=lambda reaction1, user: user == ctx.author and reaction1.emoji in ['✅', '❌'], timeout=30.0)
+
+        except asyncio.TimeoutError:
+            await ctx.channel.send("Czas minął.")
+
+        else:
+            if reaction.emoji == '✅':
+                await member.kick()
+                await ctx.send(f"Pomyślnie wyrzucono")
+
+            else:
+                await ctx.channel.send("Ok")
+
+    @commands.command()
+    @commands.has_permissions(ban_members=True)
+    async def ban(self, ctx, member: discord.Member, *, reason=None):
+        msg = await ctx.send(f"Potwierdź bana dla {member.name}.")
+        await msg.add_reaction('✅')
+        await msg.add_reaction('❌')
+
+        try:
+            reaction, user = await self.client.wait_for("reaction_add", check=lambda reaction1, user: user == ctx.author and reaction1.emoji in ['✅', '❌'], timeout=30.0)
+
+        except asyncio.TimeoutError:
+            await ctx.channel.send("Czas minął.")
+
+        else:
+            if reaction.emoji == '✅':
+                await member.ban(reason=reason)
+                await ctx.send(f"Pomyślnie zbanowano użytkownika")
+
+            else:
+                await ctx.channel.send("Ok")
+
+    @commands.command()
+    @commands.has_permissions(ban_members=True)
+    async def unban(self, ctx, member):
+        banned_users = await ctx.guild.bans()
+        member_name, member_discriminator = member.split('#')
+
+        for ban_entry in banned_users:
+            user = ban_entry.user
+
+            if (user.name, user.discriminator) == (member_name, member_discriminator):
+                await ctx.guild.unban(user)
+                await ctx.send(f"Unnbaned {user.mention}")
+                return
     
     @commands.command(aliases=['offlinemode', 'offmode'])
     @commands.has_permissions(administrator=True)

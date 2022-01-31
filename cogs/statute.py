@@ -26,7 +26,7 @@ class Help(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print(f'{Bcolors.Green}Statute{Bcolors.ENDC} loaded')
+        print(f"{Bcolors.Green}{self.__class__.__name__}{Bcolors.ENDC} Cog has been loaded\n-----")
     
     @commands.command()
     async def regulamin(self, ctx):
@@ -63,7 +63,7 @@ class Help(commands.Cog):
                                     `3.9` *Zakaz używania znaków specjalnych w celu wyróżnienia swojej wiadomości.*\n\
                                     `3.10` *Zakaz umyślnego pisania niepoprawną polszczyzną.*\n\
                                     `3.11` *Zakaz obrażania serwera.*\n\
-                                    `3.12` *Zakaz obrażania administracji serwera." ,
+                                    `3.12` *Zakaz obrażania administracji serwera.*" ,
                 colour=discord.Colour.from_rgb(135, 255, 16),
                 timestamp=datetime.datetime.utcnow())
         sPage3.set_thumbnail(url='https://lake-land.pl/unknown-removebg-preview.png')

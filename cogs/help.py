@@ -27,7 +27,7 @@ class Help(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print(f'{Bcolors.Green}Help{Bcolors.ENDC} loaded')
+        print(f"{Bcolors.Green}{self.__class__.__name__}{Bcolors.ENDC} Cog has been loaded\n-----")
     
     @commands.command()
     async def pomoc(self, ctx, *, command=None):
