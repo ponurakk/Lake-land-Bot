@@ -82,21 +82,17 @@ class Invite_tracker(commands.Cog):
         user = member
         users = await self.get_profile_data()
         logs = self.client.get_channel(int(self.logs_channel))
-        eme = Embed(description="Just joined the server", color=0x03d692, title=" ")
         try:
             invs_before = self.invites[member.guild.id]
             invs_after = await member.guild.invites()
             self.invites[member.guild.id] = invs_after
             for invite in invs_before:
                 if invite.uses < self.find_invite_by_code(invs_after, invite.code).uses:
-                    eme.add_field(name="Used invite",
-                                value=f"Inviter: {invite.inviter.mention} (`{invite.inviter}` | `{str(invite.inviter.id)}`)\nCode: `{invite.code}`\nUses: ` {str(invite.uses)} `", inline=False)
                     users[str(invite.inviter.id)]["Invites"] += 1
                     users[str(invite.inviter.id)]["Invited_Players"].append(str(member.id))
                     users[str(invite.inviter.id)]["Total"] = len(users[str(invite.inviter.id)]["Invited_Players"])
         except:
             pass
-        await logs.send(embed=eme)
         for i in await member.guild.invites():
             if i.inviter == member:
                 if users[str(user.id)]["Invites"] < i.uses:
@@ -105,17 +101,13 @@ class Invite_tracker(commands.Cog):
                     users[str(user.id)]["Leaves"] = 0
                     users[str(user.id)]["Invited_Players"] = []
 
-        with open("./cogs/json/invites.json", "w") as f:
-            json.dump(users, f, indent=4)
+                    with open("./cogs/json/invites.json", "w") as f:
+                        json.dump(users, f, indent=4)
 
 
     @commands.Cog.listener()
     async def on_member_remove(self, member):
         logs = self.client.get_channel(int(self.logs_channel))
-        eme = Embed(description="Just left the server", color=0xff0000, title=" ")
-        eme.set_author(name=str(member), icon_url=member.avatar_url)
-        eme.set_footer(text="ID: " + str(member.id))
-        eme.timestamp = member.joined_at
         try:
             guild = self.client.get_guild(779319110885965844)
             for members in guild.members:
@@ -128,12 +120,11 @@ class Invite_tracker(commands.Cog):
                     users[str(user.id)]["Leaves"] += 1
                     users[str(user.id)]["Invited_Players"].remove(str(member.id))
                     users[str(user.id)]["Total"] = len(users[str(user.id)]["Invited_Players"])
+
                     with open("./cogs/json/invites.json", "w") as f:
                         json.dump(users, f, indent=4)
-                    
         except:
             pass
-        await logs.send(embed=eme)
 
 def setup(client):
     client.add_cog(Invite_tracker(client))

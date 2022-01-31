@@ -106,7 +106,7 @@ class Admin_Commands(commands.Cog):
                 return
     
     @commands.command(aliases=['offlinemode', 'offmode'])
-    @commands.has_permissions(administrator=True)
+    @commands.has_any_role('Właściciel', 'Technik', 'Moderator', 'Helper')
     async def _offlinemode(self, ctx):
         await ctx.message.delete()
         await self.client.change_presence(status=discord.Status.invisible, activity=discord.Game(f"?pomoc"))
@@ -114,7 +114,7 @@ class Admin_Commands(commands.Cog):
 
 
     @commands.command(aliases=['onlinemode', 'onmode'])
-    @commands.has_permissions(administrator=True)
+    @commands.has_any_role('Właściciel', 'Technik', 'Moderator', 'Helper')
     async def _onlinemode(self, ctx):
         await ctx.message.delete()
         await self.client.change_presence(status=discord.Status.online, activity=discord.Game(f"?pomoc"))
