@@ -47,7 +47,7 @@ class Events(commands.Cog):
             e.set_footer(text=f'{message.guild.name}')
 
 
-            channel = self.client.get_channel(804447582167629824) # 804447582167629824 836494084104781847
+            channel = self.client.get_channel(836494084104781847) # 804447582167629824 836494084104781847
             await channel.send(embed=e)
 
     @commands.Cog.listener()
@@ -69,7 +69,7 @@ class Events(commands.Cog):
             e.set_footer(text=f'{message_before.guild.name}')
 
 
-            channel = self.client.get_channel(804447582167629824) # 804447582167629824 836494084104781847
+            channel = self.client.get_channel(836494084104781847) # 804447582167629824 836494084104781847
             await channel.send(embed=e)
     
     # channel
@@ -87,7 +87,7 @@ class Events(commands.Cog):
         e.set_footer(text=f'{channel.guild.name}')
 
 
-        channel = self.client.get_channel(804447582167629824) # 804447582167629824 836494084104781847
+        channel = self.client.get_channel(836494084104781847) # 804447582167629824 836494084104781847
         await channel.send(embed=e)
 
     @commands.Cog.listener()
@@ -103,7 +103,7 @@ class Events(commands.Cog):
         e.set_footer(text=f'{channel.guild.name}')
 
 
-        channel = self.client.get_channel(804447582167629824) # 804447582167629824 836494084104781847
+        channel = self.client.get_channel(836494084104781847) # 804447582167629824 836494084104781847
         await channel.send(embed=e)
     
     @commands.Cog.listener()
@@ -158,7 +158,7 @@ class Events(commands.Cog):
 
             e.set_footer(text=f'{channel_before.guild.name}')
 
-        channel = self.client.get_channel(804447582167629824) # 804447582167629824 836494084104781847
+        channel = self.client.get_channel(836494084104781847) # 804447582167629824 836494084104781847
         await channel.send(embed=e)
 
     # member
@@ -176,7 +176,7 @@ class Events(commands.Cog):
         e.set_author(name=member.name,
                     icon_url=member.avatar_url)
 
-        channel = self.client.get_channel(804447582167629824) # 804447582167629824 836494084104781847
+        channel = self.client.get_channel(836494084104781847) # 804447582167629824 836494084104781847
         await channel.send(embed=e)
     
     @commands.Cog.listener()
@@ -192,7 +192,7 @@ class Events(commands.Cog):
         e.set_author(name=member.name,
                     icon_url=member.avatar_url)
         
-        channel = self.client.get_channel(804447582167629824) # 804447582167629824 836494084104781847
+        channel = self.client.get_channel(836494084104781847) # 804447582167629824 836494084104781847
         await channel.send(embed=e)
 
     @commands.Cog.listener()
@@ -207,7 +207,7 @@ class Events(commands.Cog):
         e.set_author(name=user.name,
                     icon_url=user.avatar_url)
         
-        channel = self.client.get_channel(804447582167629824) # 804447582167629824 836494084104781847
+        channel = self.client.get_channel(836494084104781847) # 804447582167629824 836494084104781847
         await channel.send(embed=e)
     
     @commands.Cog.listener()
@@ -222,7 +222,7 @@ class Events(commands.Cog):
         e.set_author(name=user.name,
                     icon_url=user.avatar_url)
 
-        channel = self.client.get_channel(804447582167629824) # 804447582167629824 836494084104781847
+        channel = self.client.get_channel(836494084104781847) # 804447582167629824 836494084104781847
         await channel.send(embed=e)
 
     @commands.Cog.listener()
