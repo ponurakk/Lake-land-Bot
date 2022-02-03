@@ -1,5 +1,4 @@
-from http import client
-from re import I
+import asyncio
 import discord
 import praw
 import random
@@ -83,7 +82,7 @@ class Commands(commands.Cog):
         with open("cogs/json/invites.json", "r") as f:
             users = json.load(f)
         return users
-    
+
     async def open_account(self, user):
         with open("cogs/json/invites.json", "r") as f:
             users = json.load(f)
@@ -104,25 +103,30 @@ class Commands(commands.Cog):
         return True
 
     @commands.command()
-    async def invites(self, ctx):
-        await self.open_account(ctx.author)
-        user = ctx.author
-        users = await self.get_profile_data()
+    @commands.has_any_role('Właściciel', 'Technik', 'Moderator', 'Helper')
+    async def invites(self, ctx, member: discord.Member=None):
+        if member==None:
+            await self.open_account(ctx.author)
+            user = ctx.author
+            users = await self.get_profile_data()
+        else:
+            await self.open_account(member)
+            user = member
+            users = await self.get_profile_data()
 
         total = users[str(user.id)]["Total"]
         invites = users[str(user.id)]["Invites"]
         leaves = users[str(user.id)]["Leaves"]
         e = discord.Embed(
-            title=f"Statystyki zaproszeń dla {ctx.author.name}",
-            description=f"{ctx.author.mention} ma **{total}** zaproszeń!\n\n\
+            title=f"Statystyki zaproszeń dla {user.name}",
+            description=f"{user.mention} ma **{total}** zaproszeń!\n\n\
                 ✅ {invites} normalnych\n\
                 🚫 {leaves} wyszło",
             colour=discord.Colour.from_rgb(135, 255, 16),
             timestamp=datetime.datetime.utcnow()
             )
-        e.set_footer(text=f'{ctx.author.name}')
-        e.set_thumbnail(url=ctx.author.avatar_url)
-        e.set_footer(icon_url=self.client.user.avatar_url, text=ctx.author)
+        e.set_thumbnail(url=user.avatar_url)
+        e.set_footer(icon_url=self.client.user.avatar_url, text=user.nick)
         await ctx.send(embed=e)
 
     @commands.command()
@@ -135,12 +139,13 @@ class Commands(commands.Cog):
             await self.open_account(members)
             user = members
             users = await self.get_profile_data()
-            
+
             print(members.name)
             users[str(user.id)]["Total"] = 0
             users[str(user.id)]["Invites"] = 0
             users[str(user.id)]["Leaves"] = 0
             users[str(user.id)]["Invited_Players"] = []
+            await asyncio.sleep(1)
 
 def setup(client):
     client.add_cog(Commands(client))
