@@ -2,6 +2,7 @@ import discord
 import datetime
 import asyncio
 import random
+import time
 from discord.ext import commands
 
 class Bcolors:
@@ -20,38 +21,19 @@ class Bcolors:
     Underline = '\033[4m'
     ENDC = '\033[0m'
 
-class Example(commands.Cog):
+class Giveaway(commands.Cog):
 
     def __init__(self, client):
         self.client = client
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print(f'{Bcolors.Green}Example{Bcolors.ENDC} loaded')
-    
-    
+        print(f"{Bcolors.Green}{self.__class__.__name__}{Bcolors.ENDC} Cog has been loaded\n-----")
     
     @commands.command()
-    @commands.has_permissions(administrator=True)
+    @commands.has_any_role('Właściciel', 'Technik', 'Moderator', 'Helper')
     async def giveaway(self, ctx, duration: int, time_type: str, *, prize: str):
         ldigit = duration%10
-        if time_type == 's':
-            time_name = 'sekundy'
-        elif time_type == 'm':
-            time_name = 'minuty'
-        elif time_type == 'g':
-            time_name = 'godziny'
-        elif time_type == 'd':
-            time_name = 'dni'
-        
-        embed = discord.Embed(title=prize,
-                            description=f"Hostowany przez: {ctx.author.mention}\nZareaguj :tada: by dołączyć!\nPozostały czas: **{duration}** {time_name}",
-                            colour=discord.Colour.from_rgb(135, 255, 16),
-                            timestamp=datetime.datetime.utcnow())
-        time_start = datetime.datetime.utcnow()
-
-        msg = await ctx.channel.send(content=":tada: **GIVEAWAY** :tada:", embed=embed)
-        await msg.add_reaction("🎉")
         if time_type == 's':
             duration = duration
         elif time_type == 'm':
@@ -60,6 +42,16 @@ class Example(commands.Cog):
             duration = duration*3600
         elif time_type == 'd':
             duration = duration*86400
+
+        embed = discord.Embed(title=prize,
+                            description=f"Hostowany przez: {ctx.author.mention}\nZareaguj :tada: by dołączyć!\nKoniec giveaway'a: **<t:{int(time.time()+duration)}:R>**",
+                            colour=discord.Colour.from_rgb(135, 255, 16),
+                            timestamp=datetime.datetime.utcnow())
+        
+
+        msg = await ctx.channel.send(content=":tada: **GIVEAWAY** :tada:", embed=embed)
+        await msg.add_reaction("🎉")
+        
         await asyncio.sleep(duration)
         new_msg = await ctx.channel.fetch_message(msg.id)
 
@@ -73,7 +65,7 @@ class Example(commands.Cog):
                             Wygrał: **{winner.mention}**!\n\
                             Hostowany przez: {ctx.author.mention}",
                 colour=discord.Colour.from_rgb(135, 255, 16))
-            e.set_footer(text=f'Start: {time_start}')
+            e.set_footer(text=f'Start: <t:{int(time.time()-duration)}:R>')
             # e.set_thumbnail(url='https://lake-land.pl/unknown-removebg-preview.png') Można wstawić tort(?) czy coś w tym stylu
             await ctx.send(f"Giveaway się zakończył! :tada:", embed=e)
             await ctx.send(f"Stwórz ticket na kanale <#838400969515597855>")
@@ -81,4 +73,4 @@ class Example(commands.Cog):
 
 
 def setup(client):
-    client.add_cog(Example(client))
+    client.add_cog(Giveaway(client))
