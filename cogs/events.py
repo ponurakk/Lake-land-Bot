@@ -224,20 +224,41 @@ class Events(commands.Cog):
 
         channel = self.client.get_channel(836494084104781847) # 804447582167629824 836494084104781847
         await channel.send(embed=e)
+    
+
+    @commands.Cog.listener()
+    async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent):
+        if payload.channel_id == 836926775204249610:
+            if str(payload.emoji) == "✅":
+                role = discord.utils.get(payload.member.guild.roles, name="Gracz")
+                await payload.member.add_roles(role)
+        if payload.channel_id == 925001167375831120:
+            if payload.message_id == 925001167375831120:
+                if str(payload.emoji) == "🔧":
+                    role = discord.utils.get(payload.member.guild.roles, name="changelog")
+                    await payload.member.add_roles(role)
 
     @commands.Cog.listener()
     async def on_message(self, message):
         hello = ["hello", "hi", "witam", "siema"]
         if self.client.user.mentioned_in(message):
             await message.channel.send(f'Hej. Mój prefix to `{self.client.command_prefix}`')
-        if message.content == "ping":
+        admin = discord.utils.find(lambda r: r.name == 'Właściciel', message.guild.roles)
+        technik = discord.utils.find(lambda r: r.name == 'Technik', message.guild.roles)
+        mod = discord.utils.find(lambda r: r.name == 'Moderator', message.guild.roles)
+        helper = discord.utils.find(lambda r: r.name == 'Helper', message.guild.roles)
+        opiekun = discord.utils.find(lambda r: r.name == 'Opiekun', message.guild.roles)
+
+        if message.content == "ping" and ((admin in message.author.roles) or (technik in message.author.roles) or (mod in message.author.roles) or (helper in message.author.roles) or (opiekun in message.author.roles)):
             await message.channel.send('**Pong**')
             ping_ = self.client.latency
             ping = round(ping_ * 1000)
             print(f'Ping: {Bcolors.Green}{ping}{Bcolors.ENDC}')
             await message.channel.send(f"My ping is {ping}ms")
+
         if message.content in hello:
             await message.channel.send(f"Witaj.")
+
         if message.content == "huj":
             await message.channel.send(f"*chuj")
 
