@@ -1,9 +1,4 @@
-import discord
-import asyncio
 import json
-import time
-import typing
-import datetime
 from discord.ext import commands
 # from discord.ext.commands import has_permissions
 from discord import Embed
