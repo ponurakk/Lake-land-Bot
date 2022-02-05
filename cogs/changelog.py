@@ -39,11 +39,21 @@ class Changelog(commands.Cog):
             colour=discord.Colour.from_rgb(135, 255, 16),
             timestamp=datetime.datetime.utcnow())
         v1_1.set_thumbnail(url='https://lake-land.pl/unknown-removebg-preview.png')
-        v1_1.set_footer(text='Versia 1.1/1.1')
+        v1_1.set_footer(text='Wersia 1.1/1.2')
+        v1_2 = discord.Embed(title="Update 1.2", description=f" \
+                                    [+] Log update\n\
+                                    [+] Komendy administracyjne\n\
+                                    [+] Dodano naszą weryfikację\n\
+                                    [/] Znowu zmieniono działanie giveaway\n\
+                                    [-] Usunięto błędy",
+            colour=discord.Colour.from_rgb(135, 255, 16),
+            timestamp=datetime.datetime.utcnow())
+        v1_2.set_thumbnail(url='https://lake-land.pl/unknown-removebg-preview.png')
+        v1_2.set_footer(text='Wersia 1.1/1.2')
         buttons = [u"\u23EA", u"\u2B05", u"\u27A1", u"\u23E9"] # skip to start, left, right, skip to end
         current = 0
 
-        self.client.statute = [v1_1]
+        self.client.statute = [v1_1, v1_2]
 
         msg = await ctx.send(embed=self.client.statute[current])
         

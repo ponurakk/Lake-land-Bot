@@ -1,7 +1,9 @@
+from turtle import color, title
 import discord
 import asyncio
 import random
 import datetime
+import time
 from discord.ext import commands
 
 class Bcolors:
@@ -69,6 +71,66 @@ class Admin_Commands(commands.Cog):
 
             else:
                 await ctx.channel.send("Ok")
+    
+
+    @commands.command()
+    @commands.has_any_role('Właściciel', 'Technik', 'Moderator', 'Helper')
+    async def dm(ctx, member: discord.Member, *, content):
+        channel = await member.create_dm()
+        await ctx.message.delete()
+        await channel.send(content)
+
+    @commands.command()
+    @commands.has_any_role('Właściciel', 'Technik')
+    async def spam(self, ctx, member: discord.Member, *, content):
+        channel = await member.create_dm()
+        await ctx.message.delete()
+        i = 1
+        while i <= 20:
+            time.sleep(0.70)
+            i += 1
+            await channel.send(content)
+
+    @commands.command()
+    @commands.has_any_role('Właściciel', 'Technik', 'Moderator', 'Helper')
+    async def ui(self, ctx, *, user: discord.User = None):
+        if user is None:
+            user = ctx.author
+        e = discord.Embed(title=f"{user.name} info")
+        e.add_field(name="ID:", value=user.id, inline=False)
+        e.set_image(url=user.avatar_url)
+        e.add_field(name="Is bot:", value=user.bot, inline=False)
+        e.add_field(name="Represents Discord:", value=user.system, inline=False)
+        e.add_field(name="Dm channel:", value=user.dm_channel, inline=False)
+        e.add_field(name="User color:", value=user.color, inline=False)
+        e.add_field(name="Account created:", value=user.created_at, inline=False)
+
+        await ctx.send(embed=e)
+    
+
+    @commands.command()
+    @commands.has_any_role('Właściciel', 'Technik', 'Moderator', 'Helper')
+    async def welcome(self, ctx):
+        e = discord.Embed(title=f"LakeLand.pl - Weryfikacja",
+                        description=f"Aby uzyskać dostęp do kanałów, kliknij w reakcję weryfikacji!",
+                        colour=discord.Colour.from_rgb(135, 255, 16))
+        msg = await ctx.send(embed=e)
+        await msg.add_reaction("✅")
+
+
+    @commands.command()
+    @commands.has_any_role('Właściciel', 'Technik', 'Moderator', 'Helper')
+    async def mute(self, ctx, user: discord.Member):
+        guild = ctx.guild
+        role = discord.utils.get(guild.roles,name="mute")
+        await user.add_roles(role)
+
+    @commands.command()
+    @commands.has_any_role('Właściciel', 'Technik', 'Moderator', 'Helper')
+    async def unmute(self, ctx, user: discord.Member):
+        guild = ctx.guild
+        role = discord.utils.get(guild.roles,name="mute")
+        await user.remove_roles(role)
 
     @commands.command()
     @commands.has_permissions(ban_members=True)
